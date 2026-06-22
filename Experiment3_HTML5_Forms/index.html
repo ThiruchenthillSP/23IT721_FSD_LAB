@@ -1,0 +1,533 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Experiment 3 | Advanced HTML5 Sneaker Booking Form</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0b0c10;
+            --card-bg: rgba(255, 255, 255, 0.02);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --primary: #7b2cbf;
+            --secondary: #00f2fe;
+            --text-main: #f8f9fa;
+            --text-muted: #a1a1aa;
+            --accent: #e0aaff;
+            --error: #ff4d6d;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 80% 20%, rgba(123, 44, 191, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 20% 80%, rgba(0, 242, 254, 0.1) 0%, transparent 40%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .back-link {
+            align-self: flex-start;
+            color: var(--secondary);
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 25px;
+            display: inline-block;
+            transition: transform 0.2s ease;
+        }
+
+        .back-link:hover {
+            transform: translateX(-5px);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 25px;
+        }
+
+        header h1 {
+            font-size: 2.6rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff, var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-weight: 300;
+            font-size: 1.05rem;
+        }
+
+        main {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            padding: 40px;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        @media (max-width: 650px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+
+        @media (max-width: 650px) {
+            .form-group.full-width {
+                grid-column: span 1;
+            }
+        }
+
+        label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="number"],
+        input[type="date"],
+        input[type="time"],
+        select {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 14px;
+            color: #fff;
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--secondary);
+            box-shadow: 0 0 10px rgba(0, 242, 254, 0.15);
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        /* Color customizers */
+        .color-pickers {
+            display: flex;
+            gap: 15px;
+            background: rgba(255,255,255,0.01);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+        }
+
+        .picker-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .picker-item label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        input[type="color"] {
+            -webkit-appearance: none;
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            background: none;
+        }
+
+        input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+
+        input[type="color"]::-webkit-color-swatch {
+            border: 2px solid var(--card-border);
+            border-radius: 50%;
+        }
+
+        /* Range sliders */
+        .range-wrap {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(255,255,255,0.01);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+        }
+
+        .range-wrap input[type="range"] {
+            flex: 1;
+        }
+
+        .range-wrap span {
+            font-size: 0.9rem;
+            color: var(--secondary);
+            font-weight: 600;
+            width: 35px;
+            text-align: right;
+        }
+
+        /* Contenteditable area */
+        .editable-area {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px dashed var(--card-border);
+            border-radius: 12px;
+            padding: 18px;
+            min-height: 100px;
+            color: #fff;
+            outline: none;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            transition: all 0.3s ease;
+        }
+
+        .editable-area:focus {
+            border-color: var(--secondary);
+            border-style: solid;
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .editable-area[placeholder]:empty:before {
+            content: attr(placeholder);
+            color: var(--text-muted);
+            opacity: 0.6;
+        }
+
+        /* Realtime Sneaker Custom Preview */
+        .custom-preview-box {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border: 1px solid var(--card-border);
+            margin-bottom: 25px;
+        }
+
+        .preview-shoe-svg {
+            width: 200px;
+            height: 100px;
+        }
+
+        .preview-stats {
+            margin-top: 15px;
+            display: flex;
+            gap: 20px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .preview-stats strong {
+            color: var(--secondary);
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, var(--primary) 0%, #9d4edd 100%);
+            color: #fff;
+            border: none;
+            padding: 16px 30px;
+            border-radius: 12px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(123, 44, 191, 0.3);
+            margin-top: 20px;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 242, 254, 0.2);
+            background: linear-gradient(135deg, var(--secondary) 0%, #00c6d1 100%);
+            color: #0b0c10;
+        }
+
+        footer {
+            margin-top: 50px;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 25px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-weight: 300;
+        }
+
+        footer strong {
+            color: var(--secondary);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../index.php" class="back-link">&larr; Back to Lab Portal</a>
+        
+        <header>
+            <h1>SoleSphere lab portal</h1>
+            <p>Design and secure your custom running silhouette using advanced HTML5 variables</p>
+        </header>
+
+        <main>
+            <!-- Real-time design preview box using inline SVG to color code shoe segments -->
+            <div class="custom-preview-box">
+                <svg class="preview-shoe-svg" viewBox="0 0 100 50" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Outsole -->
+                    <path id="svg-outsole" d="M10,42 C30,42 45,45 80,43 C88,43 93,39 93,37 L92,35 C80,36 50,34 10,36 Z" fill="#ffffff" />
+                    <!-- Midsole -->
+                    <path id="svg-midsole" d="M9,36 C30,34 50,36 92,35 C92,35 93,30 85,28 C70,30 50,30 9,30 Z" fill="#00f2fe" />
+                    <!-- Upper Mesh -->
+                    <path id="svg-upper" d="M9,30 C30,30 50,30 85,28 C85,28 75,12 55,10 C45,10 38,15 35,17 C25,18 10,25 9,30 Z" fill="#7b2cbf" />
+                    <!-- Laces segment -->
+                    <path id="svg-laces" d="M38,17 L44,28 M42,16 L49,27 M46,15 L54,26" stroke="#ffffff" stroke-width="1.5" />
+                    <!-- Heel pull tab -->
+                    <path id="svg-heeltab" d="M8,30 C6,27 6,23 9,23 L9,25 C7,25 7,27 9,30 Z" fill="#ffffff" />
+                </svg>
+                <div class="preview-stats">
+                    <span>Upper: <strong id="val-upper-lbl">#7b2cbf</strong></span>
+                    <span>Midsole: <strong id="val-midsole-lbl">#00f2fe</strong></span>
+                    <span>Stiffness: <strong id="val-stiff-lbl">50%</strong></span>
+                </div>
+            </div>
+
+            <!-- Pre-order Customization Form -->
+            <form id="sneaker-form" onsubmit="handleFormSubmit(event)">
+                <div class="form-grid">
+                    <!-- Model Selection -->
+                    <div class="form-group">
+                        <label for="shoe-model">Select Shoe base Model</label>
+                        <select id="shoe-model" required>
+                            <option value="" disabled selected>Choose a model...</option>
+                            <option value="hyperpulse">HyperPulse Space V3</option>
+                            <option value="cloudstrider">CloudStrider Carbon</option>
+                            <option value="quantum">Quantum Infinity Pro</option>
+                            <option value="solarlite">SolarLite Knit</option>
+                        </select>
+                    </div>
+
+                    <!-- Size (Number Input) -->
+                    <div class="form-group">
+                        <label for="shoe-size">Shoe US Size (M)</label>
+                        <input type="number" id="shoe-size" min="4" max="15" step="0.5" value="9.5" required>
+                    </div>
+
+                    <!-- Email (Email Input) -->
+                    <div class="form-group">
+                        <label for="user-email">Notifications Email Address</label>
+                        <input type="email" id="user-email" placeholder="runner@solesphere.com" required>
+                    </div>
+
+                    <!-- Quantity (Number Input) -->
+                    <div class="form-group">
+                        <label for="order-qty">Quantity (Pairs)</label>
+                        <input type="number" id="order-qty" min="1" max="5" value="1" required>
+                    </div>
+
+                    <!-- Delivery Date (Date Input) -->
+                    <div class="form-group">
+                        <label for="pickup-date">Preferred Pickup Date</label>
+                        <input type="date" id="pickup-date" required>
+                    </div>
+
+                    <!-- Delivery Time (Time Input) -->
+                    <div class="form-group">
+                        <label for="pickup-time">Preferred Delivery Time Slot</label>
+                        <input type="time" id="pickup-time" required>
+                    </div>
+
+                    <!-- Color Customization Inputs -->
+                    <div class="form-group full-width">
+                        <label>Custom Colorways</label>
+                        <div class="color-pickers">
+                            <div class="picker-item">
+                                <label for="color-upper">Upper Mesh</label>
+                                <input type="color" id="color-upper" value="#7b2cbf">
+                            </div>
+                            <div class="picker-item">
+                                <label for="color-midsole">Midsole Aura</label>
+                                <input type="color" id="color-midsole" value="#00f2fe">
+                            </div>
+                            <div class="picker-item">
+                                <label for="color-outsole">Outer Outsole</label>
+                                <input type="color" id="color-outsole" value="#ffffff">
+                            </div>
+                            <div class="picker-item">
+                                <label for="color-laces">Laces Glow</label>
+                                <input type="color" id="color-laces" value="#ffffff">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Range Input -->
+                    <div class="form-group full-width">
+                        <label for="sole-stiffness">Midsole Stiffness Coefficient</label>
+                        <div class="range-wrap">
+                            <input type="range" id="sole-stiffness" min="10" max="100" value="50">
+                            <span id="stiffness-val">50%</span>
+                        </div>
+                    </div>
+
+                    <!-- Contenteditable Notes with Spellcheck -->
+                    <div class="form-group full-width">
+                        <label for="custom-engraving">Custom Heel Engraving & Design Notes (Up to 150 chars)</label>
+                        <div class="editable-area" id="custom-engraving" contenteditable="true" spellcheck="true" placeholder="Type your personalized text or manufacturing adjustments here (e.g., 'Born to Run' on left heel tab)..."></div>
+                        <input type="hidden" id="engraving-hidden" name="engraving-notes">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit">Submit Pre-Order Configuration</button>
+            </form>
+        </main>
+
+        <footer>
+            <p>SoleSphere HTML5 validation system. Powered by <strong>23IT721 FSD Lab</strong>.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Setup default date to tomorrow
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const yyyy = tomorrow.getFullYear();
+        const mm = String(tomorrow.getMonth() + 1).padStart(2, '0');
+        const dd = String(tomorrow.getDate()).padStart(2, '0');
+        document.getElementById('pickup-date').value = `${yyyy}-${mm}-${dd}`;
+        document.getElementById('pickup-date').min = `${yyyy}-${mm}-${dd}`;
+
+        // Setup default time
+        document.getElementById('pickup-time').value = "14:00";
+
+        // --- Live Preview Interactions ---
+        const colorUpper = document.getElementById('color-upper');
+        const colorMidsole = document.getElementById('color-midsole');
+        const colorOutsole = document.getElementById('color-outsole');
+        const colorLaces = document.getElementById('color-laces');
+        const soleStiffness = document.getElementById('sole-stiffness');
+
+        const svgUpper = document.getElementById('svg-upper');
+        const svgMidsole = document.getElementById('svg-midsole');
+        const svgOutsole = document.getElementById('svg-outsole');
+        const svgLaces = document.getElementById('svg-laces');
+        const svgHeelTab = document.getElementById('svg-heeltab');
+
+        const valUpperLbl = document.getElementById('val-upper-lbl');
+        const valMidsoleLbl = document.getElementById('val-midsole-lbl');
+        const valStiffLbl = document.getElementById('val-stiff-lbl');
+        const stiffnessVal = document.getElementById('stiffness-val');
+
+        // Event listeners for color changes
+        colorUpper.addEventListener('input', (e) => {
+            const val = e.target.value;
+            svgUpper.setAttribute('fill', val);
+            valUpperLbl.textContent = val.toUpperCase();
+        });
+
+        colorMidsole.addEventListener('input', (e) => {
+            const val = e.target.value;
+            svgMidsole.setAttribute('fill', val);
+            valMidsoleLbl.textContent = val.toUpperCase();
+        });
+
+        colorOutsole.addEventListener('input', (e) => {
+            const val = e.target.value;
+            svgOutsole.setAttribute('fill', val);
+        });
+
+        colorLaces.addEventListener('input', (e) => {
+            const val = e.target.value;
+            svgLaces.setAttribute('stroke', val);
+            svgHeelTab.setAttribute('fill', val); // match heel tab to laces
+        });
+
+        soleStiffness.addEventListener('input', (e) => {
+            const val = e.target.value;
+            stiffnessVal.textContent = `${val}%`;
+            valStiffLbl.textContent = `${val}%`;
+        });
+
+        // Form Submit handler
+        function handleFormSubmit(event) {
+            event.preventDefault();
+            
+            const engravingDiv = document.getElementById('custom-engraving');
+            const engravingHidden = document.getElementById('engraving-hidden');
+            engravingHidden.value = engravingDiv.textContent.trim();
+
+            const model = document.getElementById('shoe-model').value;
+            const size = document.getElementById('shoe-size').value;
+            const email = document.getElementById('user-email').value;
+            const qty = document.getElementById('order-qty').value;
+            const date = document.getElementById('pickup-date').value;
+            const time = document.getElementById('pickup-time').value;
+            const stiffness = soleStiffness.value;
+            const engraving = engravingHidden.value;
+
+            const summary = `
+Pre-Order Placed Successfully!
+---------------------------------------
+Model: ${model}
+Size: US ${size}
+Quantity: ${qty}
+Notification Email: ${email}
+Pickup Date/Time: ${date} at ${time}
+Custom Colorway:
+  - Upper: ${colorUpper.value}
+  - Midsole: ${colorMidsole.value}
+  - Outsole: ${colorOutsole.value}
+  - Laces: ${colorLaces.value}
+Midsole Stiffness: ${stiffness}%
+Custom Engraving: ${engraving || 'None'}
+            `;
+            
+            alert(summary);
+            console.log(summary);
+        }
+    </script>
+</body>
+</html>

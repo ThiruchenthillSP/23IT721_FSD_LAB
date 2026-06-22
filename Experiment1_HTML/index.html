@@ -1,0 +1,401 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SoleSphere | Student Dashboard Assignment 1</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 1. Header Section */
+        header {
+            border-bottom: 2px solid #0056b3;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .student-details {
+            text-align: right;
+            font-size: 0.9em;
+            color: #555;
+        }
+
+        /* 2. Navigation Bar */
+        nav {
+            background-color: #0056b3;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: space-around;
+        }
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        nav ul li a:hover {
+            text-decoration: underline;
+        }
+
+        /* 7. Latest Updates Section (Marquee) */
+        .marquee-updates {
+            background-color: #ffe6e6;
+            border: 1px solid #ff9999;
+            color: #b30000;
+            padding: 8px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        /* Sections General Styling */
+        section {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        h2 {
+            color: #0056b3;
+            border-left: 5px solid #0056b3;
+            padding-left: 10px;
+            margin-bottom: 15px;
+        }
+
+        /* 4. Dashboard Statistics Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .stat-box {
+            background-color: #e9f2fe;
+            border: 1px solid #b3d7ff;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+        }
+        .stat-box h4 {
+            margin: 0 0 5px 0;
+            color: #004085;
+            font-size: 0.9em;
+            text-transform: uppercase;
+        }
+        .stat-box p {
+            margin: 0;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #0056b3;
+        }
+
+        /* Lists */
+        ul, ol {
+            padding-left: 20px;
+            line-height: 1.6;
+        }
+
+        /* 8. Registration Form */
+        form {
+            background-color: #f9f9f9;
+            border: 1px solid #eee;
+            padding: 20px;
+            border-radius: 6px;
+            max-width: 500px;
+        }
+        .form-row {
+            margin-bottom: 12px;
+            display: flex;
+            flex-direction: column;
+        }
+        .form-row label {
+            margin-bottom: 5px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        .form-row input[type="text"],
+        .form-row input[type="email"],
+        .form-row input[type="password"],
+        .form-row input[type="date"],
+        .form-row textarea {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .form-row-gender {
+            margin-bottom: 12px;
+        }
+        .form-buttons {
+            margin-top: 15px;
+        }
+        .form-buttons input {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .btn-submit {
+            background-color: #28a745;
+            color: #fff;
+            margin-right: 10px;
+        }
+        .btn-reset {
+            background-color: #dc3545;
+            color: #fff;
+        }
+
+        /* 9. Application Modules Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #0056b3;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            font-size: 0.9em;
+            color: #777;
+            margin-top: 30px;
+            border-top: 1px solid #ddd;
+            padding-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 1. Header Section -->
+        <header>
+            <div class="header-top">
+                <div class="logo-area">
+                    <span style="font-size: 2.5em;">👟</span>
+                    <div>
+                        <h1 style="margin: 0; font-size: 1.8em;">SoleSphere Sneaker Shop</h1>
+                        <span style="font-size: 0.9em; font-style: italic; color: #666;">Step into the Future</span>
+                    </div>
+                </div>
+                <div class="student-details">
+                    <p style="margin: 0;"><strong>Student Name:</strong> Alex Carter</p>
+                    <p style="margin: 3px 0 0 0;"><strong>Register Number:</strong> 23IT721</p>
+                </div>
+            </div>
+        </header>
+
+        <!-- 2. Navigation Bar -->
+        <nav>
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#dashboard">Dashboard</a></li>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#reports">Reports</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+                <li><a href="#logout">Logout</a></li>
+            </ul>
+        </nav>
+
+        <!-- 7. Latest Updates Section (Marquee) -->
+        <div class="marquee-updates">
+            <marquee scrollamount="5">Latest Updates: Get 25% off on all Nike Air Max sneakers this week! | SoleSphere Store Hub version 2026 is now live!</marquee>
+        </div>
+
+        <!-- 3. Welcome Section -->
+        <section id="home">
+            <h2>Welcome to SoleSphere Dashboard</h2>
+            <p>Welcome to your central administration hub. SoleSphere is a premium sneaker catalog and order management application built to manage shoe releases, user profiles, inventory status, and database transaction queries in one place.</p>
+            <p><strong>Vision:</strong> To become the global standard platform for sneaker enthusiasts, traders, and stores by integrating biomechanical analysis and seamless transaction tracking.</p>
+            <p><strong>Mission:</strong> Deliver high-fidelity, interactive, and customizable digital catalog interfaces that empower users to manage sneaker assets effectively.</p>
+        </section>
+
+        <!-- 4. Dashboard Statistics -->
+        <section id="dashboard">
+            <h2>Dashboard Statistics</h2>
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <h4>Total Users</h4>
+                    <p>1,250</p>
+                </div>
+                <div class="stat-box">
+                    <h4>Active Users</h4>
+                    <p>845</p>
+                </div>
+                <div class="stat-box">
+                    <h4>Revenue</h4>
+                    <p>$45,210.00</p>
+                </div>
+                <div class="stat-box">
+                    <h4>Transactions</h4>
+                    <p>320</p>
+                </div>
+                <div class="stat-box">
+                    <h4>Notifications</h4>
+                    <p>12 New</p>
+                </div>
+                <div class="stat-box">
+                    <h4>Pending Tasks</h4>
+                    <p>5 Left</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. Features Section -->
+        <section>
+            <h2>Application Key Features</h2>
+            <ul>
+                <li><strong>Interactive 3D Visualizer:</strong> Rotate and inspect sneaker custom designs in real-time.</li>
+                <li><strong>Dynamic Drag-and-Drop:</strong> Arrange wishlists and featured items instantly.</li>
+                <li><strong>Web Storage Sync:</strong> Keep persistent settings in local and session states.</li>
+                <li><strong>Database Integration:</strong> Process customer checkout details using MySQL backends.</li>
+            </ul>
+        </section>
+
+        <!-- 6. Services Section -->
+        <section id="services">
+            <h2>Our Core Services</h2>
+            <ol>
+                <li>Retail and Wholesale Sneaker Distribution</li>
+                <li>Sneaker Customization Consultations</li>
+                <li>B2B Store Inventory Control Integrations</li>
+                <li>Biomechanical Footwear Testing Services</li>
+            </ol>
+        </section>
+
+        <!-- 9. Application Modules Table -->
+        <section id="reports">
+            <h2>Application Modules Overview</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Module ID</th>
+                        <th>Module Name</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>MOD-01</td>
+                        <td>Catalog Management</td>
+                        <td>Provides tools to register and search sneaker profiles in database.</td>
+                    </tr>
+                    <tr>
+                        <td>MOD-02</td>
+                        <td>Transaction checkout</td>
+                        <td>Connects checkout forms to insert records using PHP.</td>
+                    </tr>
+                    <tr>
+                        <td>MOD-03</td>
+                        <td>Interactive Client Canvas</td>
+                        <td>Controls CSS/JS visual animations and drag-and-drop wishlists.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- 8. Registration Form -->
+        <section id="about">
+            <h2>User Registration Portal</h2>
+            <form action="#" method="POST">
+                <div class="form-row">
+                    <label for="reg-name">Full Name</label>
+                    <input type="text" id="reg-name" required placeholder="Enter your name">
+                </div>
+                <div class="form-row">
+                    <label for="reg-email">Email Address</label>
+                    <input type="email" id="reg-email" required placeholder="Enter email address">
+                </div>
+                <div class="form-row">
+                    <label for="reg-phone">Phone Number</label>
+                    <input type="text" id="reg-phone" placeholder="Enter phone number">
+                </div>
+                <div class="form-row">
+                    <label for="reg-pass">Password</label>
+                    <input type="password" id="reg-pass" required placeholder="Create password">
+                </div>
+                <div class="form-row-gender">
+                    <label><strong>Gender:</strong></label>
+                    <input type="radio" id="gender-m" name="gender" value="male"> <label for="gender-m">Male</label>
+                    <input type="radio" id="gender-f" name="gender" value="female"> <label for="gender-f">Female</label>
+                    <input type="radio" id="gender-o" name="gender" value="other"> <label for="gender-o">Other</label>
+                </div>
+                <div class="form-row">
+                    <label for="reg-dob">Date of Birth</label>
+                    <input type="date" id="reg-dob">
+                </div>
+                <div class="form-row">
+                    <label for="reg-addr">Postal Address</label>
+                    <textarea id="reg-addr" rows="3" placeholder="Enter full address"></textarea>
+                </div>
+                <div class="form-buttons">
+                    <input type="submit" class="btn-submit" value="Register User">
+                    <input type="reset" class="btn-reset" value="Reset Form">
+                </div>
+            </form>
+        </section>
+
+        <!-- 10. Contact Information -->
+        <section id="contact">
+            <h2>Contact Information</h2>
+            <p>For support and inquiries, please reach out to us:</p>
+            <p><strong>Email:</strong> support@solesphere.com</p>
+            <p><strong>Phone Number:</strong> +1 (555) 721-0026</p>
+            <p><strong>Address:</strong> 100 Sneaker Plaza, Boston, MA, USA</p>
+            <p><strong>Social Media Links:</strong> 
+                <a href="https://github.com/AlexCarter-23IT721" target="_blank">GitHub</a> | 
+                <a href="#" target="_blank">Twitter</a> | 
+                <a href="#" target="_blank">LinkedIn</a>
+            </p>
+        </section>
+
+        <!-- 11. Footer -->
+        <footer>
+            <p>&copy; 2026 SoleSphere Sneaker Shop. Designed by Alex Carter (Reg No: 23IT721)</p>
+        </footer>
+    </div>
+</body>
+</html>

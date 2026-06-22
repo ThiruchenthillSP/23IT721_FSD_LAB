@@ -1,0 +1,603 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Experiment 2 | 3D Sneaker Customizer & Canvas Particles</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #08090c;
+            --card-bg: rgba(255, 255, 255, 0.02);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --glow-color: #00f2fe;
+            --glow-glow: rgba(0, 242, 254, 0.35);
+            --text-main: #f8f9fa;
+            --text-muted: #a1a1aa;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        canvas#particle-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            padding: 40px 20px;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .back-link {
+            align-self: flex-start;
+            color: var(--glow-color);
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 20px;
+            transition: transform 0.2s ease, text-shadow 0.2s ease;
+            text-shadow: 0 0 8px var(--glow-glow);
+        }
+
+        .back-link:hover {
+            transform: translateX(-5px);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff 40%, var(--glow-color) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-weight: 300;
+        }
+
+        .showcase-area {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 40px;
+            width: 100%;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @media (max-width: 900px) {
+            .showcase-area {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 3D Tilt Card */
+        .card-container {
+            perspective: 1000px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .tilt-card {
+            width: 450px;
+            height: 550px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 30px;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            transform-style: preserve-3d;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+            transition: box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+
+        .tilt-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 30px;
+            background: radial-gradient(circle at 50% 50%, var(--glow-glow) 0%, transparent 70%);
+            opacity: 0.5;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .brand-logo {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+            color: rgba(255, 255, 255, 0.2);
+            transform: translateZ(50px);
+        }
+
+        .shoe-box {
+            position: relative;
+            height: 250px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform-style: preserve-3d;
+        }
+
+        .shoe-glow {
+            position: absolute;
+            width: 180px;
+            height: 180px;
+            background: var(--glow-color);
+            filter: blur(80px);
+            border-radius: 50%;
+            opacity: 0.35;
+            transition: background 0.5s ease;
+            transform: translateZ(20px);
+        }
+
+        .shoe-image {
+            width: 380px;
+            transform: translateZ(100px) rotate(-15deg);
+            filter: drop-shadow(0 20px 20px rgba(0,0,0,0.6));
+            pointer-events: none;
+            transition: filter 0.3s ease;
+            animation: shoeFloat 4s ease-in-out infinite;
+        }
+
+        @keyframes shoeFloat {
+            0%, 100% {
+                transform: translateZ(100px) rotate(-15deg) translateY(0px);
+            }
+            50% {
+                transform: translateZ(100px) rotate(-15deg) translateY(-15px);
+            }
+        }
+
+        .shoe-info {
+            transform: translateZ(60px);
+        }
+
+        .shoe-name {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 5px;
+            color: #fff;
+        }
+
+        .shoe-category {
+            font-size: 0.85rem;
+            color: var(--glow-color);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            font-weight: 600;
+            text-shadow: 0 0 5px var(--glow-glow);
+        }
+
+        .buy-action {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .price {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .cart-btn {
+            background: #fff;
+            color: #000;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .cart-btn:hover {
+            background: var(--glow-color);
+            color: #000;
+            box-shadow: 0 0 15px var(--glow-color);
+            transform: scale(1.05);
+        }
+
+        /* Control Panel */
+        .control-panel {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            padding: 30px;
+            backdrop-filter: blur(15px);
+        }
+
+        .control-panel h2 {
+            font-size: 1.25rem;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 10px;
+            color: #fff;
+        }
+
+        .control-group {
+            margin-bottom: 25px;
+        }
+
+        .control-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .color-options {
+            display: flex;
+            gap: 12px;
+        }
+
+        .color-dot {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .color-dot:hover {
+            transform: scale(1.15);
+        }
+
+        .color-dot.active {
+            border-color: #fff;
+            transform: scale(1.1);
+        }
+
+        .dot-cyan { background: #00f2fe; }
+        .dot-magenta { background: #ff007f; }
+        .dot-lime { background: #39ff14; }
+        .dot-purple { background: #bd00ff; }
+
+        .slider-wrap {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .slider-wrap span {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            width: 30px;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--glow-color);
+            cursor: pointer;
+            box-shadow: 0 0 10px var(--glow-color);
+            transition: transform 0.2s ease;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.25);
+        }
+
+        .toggle-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--card-border);
+            color: #fff;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-btn:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: var(--glow-color);
+        }
+
+        footer {
+            margin-top: 60px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-align: center;
+            font-weight: 300;
+        }
+    </style>
+</head>
+<body>
+    <!-- Canvas for particle background -->
+    <canvas id="particle-canvas"></canvas>
+
+    <div class="container">
+        <a href="../index.php" class="back-link">&larr; Back to Lab Portal</a>
+        
+        <header>
+            <h1>3D Motion customizer</h1>
+            <p>Interactive 3D Layer Tilt effect paired with dynamic particle physics simulation</p>
+        </header>
+
+        <div class="showcase-area">
+            <!-- 3D Card -->
+            <div class="card-container">
+                <div class="tilt-card" id="card">
+                    <div class="brand-logo">SOLESPHERE</div>
+                    
+                    <div class="shoe-box">
+                        <div class="shoe-glow" id="shoe-glow"></div>
+                        <img src="sneaker.png" alt="3D Neon Shoe" class="shoe-image" id="shoe-img">
+                    </div>
+                    
+                    <div class="shoe-info">
+                        <h2 class="shoe-name">HyperPulse Neon</h2>
+                        <div class="shoe-category">Engineered Running</div>
+                        <div class="buy-action">
+                            <span class="price">$210.00</span>
+                            <button class="cart-btn">Customise</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Customizer controls -->
+            <div class="control-panel">
+                <h2>Customization Core</h2>
+                
+                <div class="control-group">
+                    <label>Neon Aura Aura Glow</label>
+                    <div class="color-options">
+                        <div class="color-dot dot-cyan active" data-color="#00f2fe" data-glow="rgba(0,242,254,0.35)"></div>
+                        <div class="color-dot dot-magenta" data-color="#ff007f" data-glow="rgba(255,0,127,0.35)"></div>
+                        <div class="color-dot dot-lime" data-color="#39ff14" data-glow="rgba(57,255,20,0.35)"></div>
+                        <div class="color-dot dot-purple" data-color="#bd00ff" data-glow="rgba(189,0,255,0.35)"></div>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label>Aura Floating Speed</label>
+                    <div class="slider-wrap">
+                        <input type="range" id="float-speed" min="1" max="8" value="4">
+                        <span id="speed-val">4s</span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label>Particle Velocity</label>
+                    <div class="slider-wrap">
+                        <input type="range" id="part-speed" min="0" max="10" value="2" step="0.5">
+                        <span id="part-val">2.0</span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label>Particle Physics Mode</label>
+                    <button class="toggle-btn" id="physics-toggle">Switch: Defying Gravity</button>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Designed for FSD Lab Experiment 2. Features GPU-accelerated CSS 3D transforms & Canvas 2D engine.</p>
+        </footer>
+    </div>
+
+    <script>
+        // --- 3D TILT EFFECT ---
+        const card = document.getElementById('card');
+        const shoeImg = document.getElementById('shoe-img');
+
+        card.addEventListener('mousemove', (e) => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left; // x position inside element
+            const y = e.clientY - rect.top;  // y position inside element
+            
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            
+            const rotateX = (centerY - y) / 10; // max 25 deg tilt
+            const rotateY = (x - centerX) / 10; 
+            
+            card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            shoeImg.style.transform = `translateZ(130px) rotate(-10deg) scale(1.05)`;
+        });
+
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = `rotateX(0deg) rotateY(0deg)`;
+            card.style.transition = 'transform 0.5s ease-out';
+            shoeImg.style.transform = `translateZ(100px) rotate(-15deg)`;
+            shoeImg.style.transition = 'transform 0.5s ease-out';
+        });
+
+        card.addEventListener('mouseenter', () => {
+            card.style.transition = 'none';
+            shoeImg.style.transition = 'none';
+        });
+
+        // --- COLOR CUSTOMIZATION ---
+        const colorDots = document.querySelectorAll('.color-dot');
+        const root = document.documentElement;
+
+        colorDots.forEach(dot => {
+            dot.addEventListener('click', () => {
+                colorDots.forEach(d => d.classList.remove('active'));
+                dot.classList.add('active');
+                
+                const color = dot.getAttribute('data-color');
+                const glow = dot.getAttribute('data-glow');
+                
+                root.style.setProperty('--glow-color', color);
+                root.style.setProperty('--glow-glow', glow);
+                
+                // Add flash effect to shoe
+                shoeImg.style.filter = `drop-shadow(0 0 30px ${color})`;
+                setTimeout(() => {
+                    shoeImg.style.filter = `drop-shadow(0 20px 20px rgba(0,0,0,0.6))`;
+                }, 400);
+            });
+        });
+
+        // --- SPEED AND TILT INPUTS ---
+        const floatSpeedInput = document.getElementById('float-speed');
+        const speedValLabel = document.getElementById('speed-val');
+        
+        floatSpeedInput.addEventListener('input', (e) => {
+            const speed = e.target.value;
+            speedValLabel.textContent = `${speed}s`;
+            // Modify float animation duration
+            shoeImg.style.animationDuration = `${speed}s`;
+        });
+
+        // --- CANVAS PARTICLE BACKGROUND ---
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+        const partSpeedInput = document.getElementById('part-speed');
+        const partValLabel = document.getElementById('part-val');
+        const physicsToggle = document.getElementById('physics-toggle');
+
+        let particles = [];
+        let numParticles = 80;
+        let baseSpeed = 2.0;
+        let physicsMode = 'up'; // 'up' (gravity-defying), 'down' (rain)
+
+        partSpeedInput.addEventListener('input', (e) => {
+            baseSpeed = parseFloat(e.target.value);
+            partValLabel.textContent = baseSpeed.toFixed(1);
+        });
+
+        physicsToggle.addEventListener('click', () => {
+            if (physicsMode === 'up') {
+                physicsMode = 'down';
+                physicsToggle.textContent = 'Switch: Heavy Gravity';
+            } else {
+                physicsMode = 'up';
+                physicsToggle.textContent = 'Switch: Defying Gravity';
+            }
+        });
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = physicsMode === 'up' ? canvas.height + 20 : -20;
+                this.size = Math.random() * 3 + 1;
+                this.speedX = (Math.random() - 0.5) * 0.8;
+                this.speedY = physicsMode === 'up' 
+                    ? -(Math.random() * 1.5 + 0.5) 
+                    : (Math.random() * 1.5 + 0.5);
+                this.opacity = Math.random() * 0.6 + 0.1;
+            }
+
+            update() {
+                this.x += this.speedX * (baseSpeed / 2);
+                this.y += this.speedY * baseSpeed;
+
+                // fade out near bounds
+                if (physicsMode === 'up' && this.y < 50) this.opacity -= 0.01;
+                if (physicsMode === 'down' && this.y > canvas.height - 50) this.opacity -= 0.01;
+
+                if (this.opacity <= 0 || this.x < 0 || this.x > canvas.width) {
+                    this.reset();
+                }
+            }
+
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.opacity;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                
+                // Set color to glowing active neon color
+                ctx.fillStyle = root.style.getPropertyValue('--glow-color').trim() || '#00f2fe';
+                ctx.shadowBlur = 8;
+                ctx.shadowColor = ctx.fillStyle;
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        // Initialize particles
+        for (let i = 0; i < numParticles; i++) {
+            particles.push(new Particle());
+            // Randomize starting y position
+            particles[i].y = Math.random() * canvas.height;
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+    </script>
+</body>
+</html>

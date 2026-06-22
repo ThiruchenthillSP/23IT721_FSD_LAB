@@ -1,0 +1,561 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Experiment 6 | JS Event Handling Playground</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0b0c10;
+            --card-bg: rgba(255, 255, 255, 0.02);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --primary: #bd00ff;
+            --secondary: #00f2fe;
+            --text-main: #f8f9fa;
+            --text-muted: #a1a1aa;
+            --success: #39ff14;
+            --error: #ff4d6d;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            background-image: radial-gradient(circle at 10% 90%, rgba(189, 0, 255, 0.08) 0%, transparent 40%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1100px;
+        }
+
+        .back-link {
+            align-self: flex-start;
+            color: var(--secondary);
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 25px;
+            display: inline-block;
+            transition: transform 0.2s ease;
+        }
+
+        .back-link:hover {
+            transform: translateX(-5px);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 25px;
+        }
+
+        header h1 {
+            font-size: 2.6rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff, var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-weight: 300;
+        }
+
+        .layout-grid {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 30px;
+        }
+
+        @media (max-width: 900px) {
+            .layout-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Interactive Product card */
+        .interactive-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            padding: 35px;
+            backdrop-filter: blur(12px);
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            position: relative;
+        }
+
+        .visual-panel {
+            background: rgba(0,0,0,0.2);
+            border-radius: 16px;
+            border: 1px solid var(--card-border);
+            height: 250px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            cursor: crosshair;
+        }
+
+        .product-img {
+            width: 320px;
+            height: auto;
+            filter: drop-shadow(0 15px 15px rgba(0,0,0,0.5));
+            transition: transform 0.1s ease;
+        }
+
+        .zoom-overlay {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1.5px solid var(--secondary);
+            border-radius: 50%;
+            width: 100px;
+            height: 100px;
+            pointer-events: none;
+            display: none;
+            backdrop-filter: blur(2px);
+            box-shadow: 0 0 15px var(--secondary);
+            transform: translate(-50%, -50%);
+        }
+
+        .heart-icon {
+            position: absolute;
+            font-size: 5rem;
+            color: var(--error);
+            opacity: 0;
+            transform: scale(0.5);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            pointer-events: none;
+            z-index: 5;
+            text-shadow: 0 0 20px rgba(255, 77, 109, 0.5);
+        }
+
+        .product-details h2 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+
+        .tagline {
+            font-size: 0.85rem;
+            color: var(--secondary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .selectors-row {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .selector-box {
+            flex: 1;
+            min-width: 180px;
+        }
+
+        .selector-box label {
+            display: block;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-option {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--card-border);
+            color: #fff;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            flex-grow: 1;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .btn-option:hover {
+            border-color: var(--secondary);
+            background: rgba(255,255,255,0.06);
+        }
+
+        .btn-option.active {
+            background: var(--secondary);
+            color: #0b0c10;
+            border-color: var(--secondary);
+            box-shadow: 0 0 10px var(--secondary);
+        }
+
+        .coupon-input {
+            width: 100%;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            padding: 12px;
+            color: #fff;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .coupon-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(189,0,255,0.2);
+            background: rgba(255,255,255,0.06);
+        }
+
+        .coupon-input.valid {
+            border-color: var(--success);
+            box-shadow: 0 0 10px rgba(57,255,20,0.15);
+        }
+
+        .coupon-input.invalid {
+            border-color: var(--error);
+            box-shadow: 0 0 10px rgba(255,77,109,0.15);
+        }
+
+        /* Event Logger Terminal */
+        .logger-panel {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            height: 570px;
+            backdrop-filter: blur(12px);
+        }
+
+        .logger-panel h2 {
+            font-size: 1.1rem;
+            color: #fff;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            padding-bottom: 10px;
+        }
+
+        .logger-panel .clear-logs-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 0.8rem;
+            text-decoration: underline;
+        }
+
+        .logger-panel .clear-logs-btn:hover {
+            color: var(--secondary);
+        }
+
+        .log-terminal {
+            flex-grow: 1;
+            overflow-y: auto;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.8rem;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding-right: 5px;
+        }
+
+        .log-entry {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+            padding-bottom: 6px;
+            line-height: 1.4;
+            animation: logFadeIn 0.2s ease forwards;
+        }
+
+        @keyframes logFadeIn {
+            from { opacity: 0; transform: translateX(10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .log-timestamp {
+            color: var(--text-muted);
+        }
+
+        .log-type {
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            margin-right: 5px;
+        }
+
+        .type-click { background: rgba(0, 242, 254, 0.15); color: var(--secondary); }
+        .type-mousemove { background: rgba(255, 255, 255, 0.08); color: #fff; }
+        .type-keydown { background: rgba(189, 0, 255, 0.15); color: var(--primary); }
+        .type-focus { background: rgba(57, 255, 20, 0.15); color: var(--success); }
+        .type-blur { background: rgba(255, 77, 109, 0.15); color: var(--error); }
+        .type-dblclick { background: rgba(255, 77, 109, 0.15); color: #ff0055; }
+
+        .log-body {
+            color: #d1d5db;
+        }
+
+        .help-banner {
+            grid-column: span 2;
+            background: rgba(0, 242, 254, 0.05);
+            border: 1px solid rgba(0, 242, 254, 0.15);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--secondary);
+            text-shadow: 0 0 5px var(--secondary-glow);
+        }
+
+        @media (max-width: 900px) {
+            .help-banner {
+                grid-column: span 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../index.php" class="back-link">&larr; Back to Lab Portal</a>
+        
+        <header>
+            <h1>Event handling dashboard</h1>
+            <p>Trigger and analyze browser events dynamically in our simulated log console</p>
+        </header>
+
+        <div class="layout-grid">
+            <!-- Left: Interactive Card -->
+            <div class="interactive-card">
+                <!-- Visual Panel: Mousemove & Dblclick events -->
+                <div class="visual-panel" id="visual-panel">
+                    <img src="sneaker.png" alt="Interactive Sneaker" class="product-img" id="product-img">
+                    <div class="zoom-overlay" id="zoom-lens"></div>
+                    <div class="heart-icon" id="heart-icon">&#9829;</div>
+                </div>
+
+                <div class="product-details">
+                    <h2>HyperPulse Quantum</h2>
+                    <div class="tagline">Interactive engineering showcase</div>
+                    
+                    <div class="selectors-row">
+                        <!-- Size Click Selector -->
+                        <div class="selector-box">
+                            <label>Select US Size (Click)</label>
+                            <div class="btn-group">
+                                <button class="btn-option active" onclick="selectSize(this, '9')">US 9</button>
+                                <button class="btn-option" onclick="selectSize(this, '10')">US 10</button>
+                                <button class="btn-option" onclick="selectSize(this, '11')">US 11</button>
+                            </div>
+                        </div>
+
+                        <!-- Color Click Selector -->
+                        <div class="selector-box">
+                            <label>Apply Colorway (Click)</label>
+                            <div class="btn-group">
+                                <button class="btn-option active" onclick="selectColor(this, 'Neon Blue', '#00f2fe')">Neon Blue</button>
+                                <button class="btn-option" onclick="selectColor(this, 'Solar Lime', '#39ff14')">Solar Lime</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Input box: Focus & Blur events -->
+                <div class="form-group">
+                    <label for="coupon-field">Enter Coupon Code (Focus / Blur / Validate)</label>
+                    <input type="text" id="coupon-field" class="coupon-input" placeholder="Enter 'SOLE25' for 25% off...">
+                </div>
+            </div>
+
+            <!-- Right: Event Logger Terminal -->
+            <div class="logger-panel">
+                <h2>
+                    <span>Live Event Terminal</span>
+                    <button class="clear-logs-btn" onclick="clearLogs()">Clear</button>
+                </h2>
+                
+                <div class="log-terminal" id="log-terminal">
+                    <!-- Logs inserted dynamically -->
+                </div>
+            </div>
+
+            <!-- Keyboard shortcuts help -->
+            <div class="help-banner">
+                <strong>Keyboard Listeners Active:</strong> Press <kbd>B</kbd> to toggle background shade, <kbd>C</kbd> to flash neon aura, or <kbd>&larr; / &rarr;</kbd> arrow keys to scale shoe.
+            </div>
+        </div>
+
+        <footer style="margin-top: 60px; text-align: center; border-top: 1px solid var(--card-border); padding-top: 25px; color: var(--text-muted); font-size: 0.85rem; font-weight: 300;">
+            <p>JS Event Handling engine. Part of <strong>23IT721 FSD Lab</strong>.</p>
+        </footer>
+    </div>
+
+    <script>
+        const logTerminal = document.getElementById('log-terminal');
+        const visualPanel = document.getElementById('visual-panel');
+        const productImg = document.getElementById('product-img');
+        const zoomLens = document.getElementById('zoom-lens');
+        const heartIcon = document.getElementById('heart-icon');
+        const couponField = document.getElementById('coupon-field');
+
+        let imgScale = 1.0;
+
+        // Helper to add logs to terminal
+        function logEvent(type, message) {
+            const now = new Date();
+            const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}.${String(now.getMilliseconds()).padStart(3, '0')}`;
+            
+            const log = document.createElement('div');
+            log.className = 'log-entry';
+            log.innerHTML = `
+                <span class="log-timestamp">[${timeStr}]</span>
+                <span class="log-type type-${type.toLowerCase()}">${type.toUpperCase()}</span>
+                <span class="log-body">${message}</span>
+            `;
+            
+            logTerminal.appendChild(log);
+            logTerminal.scrollTop = logTerminal.scrollHeight;
+        }
+
+        // --- 1. CLICK EVENTS ---
+        window.selectSize = function(btn, size) {
+            // Remove active class
+            btn.parentElement.querySelectorAll('.btn-option').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            logEvent('click', `Size selected: <strong>US ${size}</strong> (Target: Button)`);
+        };
+
+        window.selectColor = function(btn, colorName, colorCode) {
+            btn.parentElement.querySelectorAll('.btn-option').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            productImg.style.filter = `drop-shadow(0 15px 15px rgba(0,0,0,0.5)) drop-shadow(0 0 20px ${colorCode})`;
+            logEvent('click', `Applied color preset: <strong style="color:${colorCode};">${colorName}</strong>`);
+        };
+
+        // --- 2. DOUBLE CLICK EVENT (Wishlist Favorite) ---
+        visualPanel.addEventListener('dblclick', (e) => {
+            heartIcon.style.opacity = '1';
+            heartIcon.style.transform = 'scale(1.2)';
+            
+            setTimeout(() => {
+                heartIcon.style.opacity = '0';
+                heartIcon.style.transform = 'scale(0.5)';
+            }, 600);
+            
+            logEvent('dblclick', `Shoe double-clicked! Added HyperPulse to favorites bag.`);
+        });
+
+        // --- 3. MOUSEMOVE EVENT (Lens magnifier) ---
+        visualPanel.addEventListener('mousemove', (e) => {
+            const rect = visualPanel.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            // show lens
+            zoomLens.style.display = 'block';
+            zoomLens.style.left = `${x}px`;
+            zoomLens.style.top = `${y}px`;
+
+            // Micro tilt shoe
+            const tiltX = (rect.height / 2 - y) / 15;
+            const tiltY = (x - rect.width / 2) / 15;
+            productImg.style.transform = `scale(${imgScale}) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
+
+            // Log once every 40 moves to not overflow console too fast
+            if (Math.random() < 0.05) {
+                logEvent('mousemove', `Coordinates tracked: X=${Math.round(x)}px, Y=${Math.round(y)}px`);
+            }
+        });
+
+        visualPanel.addEventListener('mouseleave', () => {
+            zoomLens.style.display = 'none';
+            productImg.style.transform = `scale(${imgScale}) rotate(0)`;
+        });
+
+        // --- 4. FOCUS & BLUR EVENTS ---
+        couponField.addEventListener('focus', () => {
+            couponField.classList.remove('valid', 'invalid');
+            logEvent('focus', `Coupon text-field engaged. Waiting for code entry...`);
+        });
+
+        couponField.addEventListener('blur', () => {
+            const val = couponField.value.trim().toUpperCase();
+            
+            if (val === '') {
+                logEvent('blur', `Coupon field disengaged. Input is empty.`);
+                couponField.classList.remove('valid', 'invalid');
+            } else if (val === 'SOLE25') {
+                couponField.classList.add('valid');
+                logEvent('blur', `Validation: <span style="color:var(--success);">SUCCESS</span>. Code 'SOLE25' applied (25% discount).`);
+            } else {
+                couponField.classList.add('invalid');
+                logEvent('blur', `Validation: <span style="color:var(--error);">FAIL</span>. Invalid code '${val}'.`);
+            }
+        });
+
+        // --- 5. KEYDOWN EVENT ---
+        document.addEventListener('keydown', (e) => {
+            const key = e.key.toUpperCase();
+            
+            // Check if user is typing in coupon field, if so don't run keyboard shortcuts
+            if (document.activeElement === couponField) return;
+
+            if (key === 'B') {
+                const currentBg = document.body.style.backgroundColor;
+                document.body.style.backgroundColor = currentBg === 'rgb(26, 17, 39)' ? '#0b0c10' : '#1a1127';
+                logEvent('keydown', `Key [B] pressed. Swapped background base shade.`);
+            } else if (key === 'C') {
+                productImg.style.filter = 'drop-shadow(0 0 30px #bd00ff)';
+                setTimeout(() => {
+                    productImg.style.filter = 'drop-shadow(0 15px 15px rgba(0,0,0,0.5))';
+                }, 300);
+                logEvent('keydown', `Key [C] pressed. Triggered neon flash effect.`);
+            } else if (e.key === 'ArrowRight') {
+                imgScale = Math.min(1.3, imgScale + 0.05);
+                productImg.style.transform = `scale(${imgScale})`;
+                logEvent('keydown', `Key [ArrowRight] pressed. Scaled shoe up to ${Math.round(imgScale * 100)}%`);
+            } else if (e.key === 'ArrowLeft') {
+                imgScale = Math.max(0.7, imgScale - 0.05);
+                productImg.style.transform = `scale(${imgScale})`;
+                logEvent('keydown', `Key [ArrowLeft] pressed. Scaled shoe down to ${Math.round(imgScale * 100)}%`);
+            }
+        });
+
+        // Clear log window
+        window.clearLogs = function() {
+            logTerminal.innerHTML = '';
+        };
+
+        // Welcome log
+        logEvent('focus', 'Event Handling system active. Click or interact to test events.');
+    </script>
+</body>
+</html>

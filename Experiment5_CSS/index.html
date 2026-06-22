@@ -1,0 +1,160 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Experiment 5 | CSS Styling Methodologies & Themes</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- EXTERNAL STYLE SHEET -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- INTERNAL STYLE SHEET -->
+    <style>
+        /* Document-level (Internal) styles */
+        .theme-selector-bar {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 40px;
+            background: rgba(255, 255, 255, 0.02);
+            padding: 15px;
+            border-radius: 14px;
+            border: 1px solid var(--border-color);
+        }
+
+        .theme-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 12px 24px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .theme-btn:hover {
+            background: var(--accent);
+            color: #000;
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        /* Specific internal styling for cards */
+        .showcase-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 25px;
+            transition: transform 0.3s ease;
+        }
+
+        .showcase-card:hover {
+            transform: scale(1.03);
+            border-color: var(--accent);
+        }
+
+        .showcase-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .css-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: var(--accent);
+            margin-bottom: 15px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body data-theme="default">
+    <div class="container">
+        <a href="../index.php" class="back-link">&larr; Back to Lab Portal</a>
+        
+        <header>
+            <h1>CSS methodology playground</h1>
+            <p>Compare Inline, Internal, and External style directives while switching layout templates</p>
+        </header>
+
+        <!-- Theme Switcher -->
+        <div class="theme-selector-bar">
+            <button class="theme-btn" onclick="setTheme('default')">SoleSphere Default</button>
+            <button class="theme-btn" onclick="setTheme('cyberpunk')">Cyberpunk Orange</button>
+            <button class="theme-btn" onclick="setTheme('oceanic')">Oceanic Green</button>
+            <button class="theme-btn" onclick="setTheme('minimalist')">Minimalist Light</button>
+        </div>
+
+        <!-- External CSS Showcase Section -->
+        <section class="showcase-section">
+            <span class="css-label">Linked External Stylesheet (style.css)</span>
+            <h2>Global Theme Container</h2>
+            <p>This container's spacing, border-radius, background glassmorphic filtering, and transition properties are defined inside the external <code>style.css</code> file. The color palette changes instantly when you toggle active custom CSS variables at the root level.</p>
+        </section>
+
+        <!-- Grids demonstrating Internal and Inline styling -->
+        <div class="grid-container">
+            
+            <!-- Card 1: Internal CSS -->
+            <div class="showcase-card">
+                <span class="css-label">Document Internal CSS (&lt;style&gt;)</span>
+                <h3>Card 1: Structured Grid</h3>
+                <p style="font-size: 0.9rem; line-height: 1.5; color: var(--text-muted);">
+                    This card leverages styles defined inside the document's <code>&lt;style&gt;</code> block. It defines the grid layout template, mouse hover scaling (<code>transform: scale(1.03)</code>), and base title font-sizes.
+                </p>
+            </div>
+
+            <!-- Card 2: Inline CSS -->
+            <div class="showcase-card" style="background: linear-gradient(135deg, #7b2cbf 0%, #00f2fe 100%); border: 3px double #fff; border-radius: 24px; box-shadow: 0 10px 25px rgba(0, 242, 254, 0.3);">
+                <!-- Inline styled label -->
+                <span style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; letter-spacing: 1px; color: #fff; background: rgba(0,0,0,0.4); padding: 4px 10px; border-radius: 20px; margin-bottom: 15px; display: inline-block;">
+                    Tag Inline CSS (style="...")
+                </span>
+                
+                <!-- Inline styled title -->
+                <h3 style="font-size: 1.35rem; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.5); font-weight: 800; margin-bottom: 10px;">
+                    Card 2: Gradient Custom
+                </h3>
+                
+                <!-- Inline styled paragraph -->
+                <p style="font-size: 0.9rem; line-height: 1.5; color: #fff; font-weight: 400;">
+                    This card completely bypasses stylesheet rules by applying colors, shadows, double borders, and custom rounding settings directly on the tag utilizing inline <code>style</code> attributes.
+                </p>
+            </div>
+
+            <!-- Card 3: Combined CSS (Cascade demonstration) -->
+            <div class="showcase-card" style="border-color: #ff007f;">
+                <span class="css-label">Cascaded Styles</span>
+                <h3>Card 3: Overridden Borders</h3>
+                <p style="font-size: 0.9rem; line-height: 1.5; color: var(--text-muted);">
+                    This card combines all three styles: its layout is defined by the <strong>External</strong> sheet, its structure by <strong>Internal</strong> card definitions, but its border color is overridden <strong>Inline</strong> to neon pink.
+                </p>
+            </div>
+
+        </div>
+
+        <footer style="margin-top: 60px; text-align: center; border-top: 1px solid var(--border-color); padding-top: 25px; color: var(--text-muted); font-size: 0.85rem; font-weight: 300;">
+            <p>CSS Cascading & Styling playground. Part of <strong>23IT721 FSD Lab</strong>.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Switch the data-theme attribute on the body tag
+        function setTheme(themeName) {
+            document.body.setAttribute('data-theme', themeName);
+            console.log(`Active theme switched to: ${themeName}`);
+        }
+    </script>
+</body>
+</html>
